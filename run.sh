@@ -3,7 +3,7 @@
 # run.sh
 
 # --
-# get data
+# Get data
 
 PROJECT_ROOT=$(pwd)
 mkdir -p data/orig
@@ -14,14 +14,16 @@ unzip tiki.zip && rm tiki.zip
 cd $PROJECT_ROOT
 
 # --
-# sample
+# Random walk sampling
 
 mkdir -p data
 
 python rw-sample.py --inpath data/orig/calls.csv > data/calls.rw
 
 # --
-# run SGM
+# Run SGM
 
-python kasios-sgm.py | tee kasios.jl
-cat kasios.jl  | sort -n > tmp && mv tmp kasios.jl
+python kasios-sgm.py
+
+python kasios-sgm.py | tee results/kasios.jl
+cat results/kasios.jl  | sort -n > tmp && mv tmp results/kasios.jl
