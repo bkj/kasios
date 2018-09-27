@@ -31,20 +31,14 @@ cat results/kasios.jl  | sort -n > tmp && mv tmp results/kasios.jl
 # --
 # Run SGM (backends)
 
-NUM_NODES=15000
+NUM_NODES=1000
 NUM_SEEDS=32
 
-python main.py --backend scipy --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS
-# 6000/32:  32s / 0.0
-# 10000/32: 64s / 0.0
-python main.py --backend scipy_fused --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS
-# 6000/32:  16s / 0.0
-# 10000/32: 38s / 0.0
-python main.py --backend auction --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS
-# 6000/32:  18s / 0.0
-# 10000/32: 81s / 0.0
-python main.py --backend auction_fused --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS
-# 6000/32:  13s / 0.0
-# 10000/32: 39s / 0.0
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend jv_classic
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend jv_sparse
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend jv_fused
 
-# !! I think `csr_lap_auction` has fairly large overhead
+# python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend auction_classic
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend auction_sparse
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend auction_fused
+
