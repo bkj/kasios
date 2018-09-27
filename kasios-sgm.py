@@ -20,10 +20,14 @@ import itertools
 from concurrent.futures import ProcessPoolExecutor
 
 sys.path.append('/home/bjohnson/projects/sgm')
-# from backends import ScipySparseSGM as SGMClass
-# from backends import ScipyFusedSGM as SGMClass
-from backends import AuctionSparseSGM as SGMClass
-# from backends import AuctionFusedSGM as SGMClass
+from backends import ScipySGM, ScipyFusedSGM, AuctionSGM, AuctionFusedSGM
+
+_backends = {
+    "scipy"         : ScipySGM,
+    "scipy_fused"   : ScipyFusedSGM,
+    "auction"       : AuctionSGM,
+    "auction_fused" : AuctionFusedSGM,
+}
 
 # --
 # CLI
@@ -31,6 +35,7 @@ from backends import AuctionSparseSGM as SGMClass
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--inpath', type=str, default='./data/calls.npy')
+    parser.add_argument('--backend', type=str, default='scipy', choices=_backends.keys())
     parser.add_argument('--seed', type=int, default=123)
     return parser.parse_args()
 
@@ -111,6 +116,7 @@ def run_experiment(params):
 # IO
 
 args = parse_args()
+SGMClass = _backends[args.backend]
 np.random.seed(args.seed)
 
 edges = np.load(args.inpath)
@@ -122,7 +128,7 @@ rw = open('./data/calls.rw').read().splitlines()
 rw = np.array([int(xx) for xx in rw])
 
 # >>
-print(run_experiment((4000, 32)))
+print(run_experiment((6000, 32)))
 # <<
 
 # --
