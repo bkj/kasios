@@ -23,7 +23,7 @@ python rw-sample.py --inpath data/orig/calls.csv > data/calls.rw
 # --
 # Run SGM (w/ various backends)
 
-NUM_NODES=1000
+NUM_NODES=5000
 NUM_SEEDS=32
 
 python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend scipy.classic.jv
