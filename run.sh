@@ -21,15 +21,7 @@ mkdir -p data
 python rw-sample.py --inpath data/orig/calls.csv > data/calls.rw
 
 # --
-# Run SGM (grid)
-
-python kasios-sgm.py
-
-python kasios-sgm.py | tee results/kasios.jl
-cat results/kasios.jl  | sort -n > tmp && mv tmp results/kasios.jl
-
-# --
-# Run SGM (backends)
+# Run SGM (w/ various backends)
 
 NUM_NODES=1000
 NUM_SEEDS=32
