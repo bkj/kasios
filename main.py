@@ -16,27 +16,8 @@ import pandas as pd
 from time import time
 
 from scipy import sparse
-import itertools
-from concurrent.futures import ProcessPoolExecutor
 
-sys.path.append('/home/bjohnson/projects/sgm')
-from backends import (
-    JVClassicSGM,
-    JVSparseSGM,
-    JVFusedSGM,
-    AuctionClassicSGM,
-    AuctionSparseSGM,
-    AuctionFusedSGM
-)
-
-_backends = {
-    "jv_classic"      : JVClassicSGM,
-    "jv_sparse"       : JVSparseSGM,
-    "jv_fused"        : JVFusedSGM,
-    "auction_classic" : AuctionClassicSGM,
-    "auction_sparse"  : AuctionSparseSGM,
-    "auction_fused"   : AuctionFusedSGM
-}
+import sgm
 
 # --
 # CLI
@@ -44,7 +25,7 @@ _backends = {
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--inpath', type=str, default='./data/calls.npy')
-    parser.add_argument('--backend', type=str, default='scipy', choices=_backends.keys())
+    parser.add_argument('--backend', type=str, default='scipy.classic.jv')
     parser.add_argument('--num-nodes', type=int, default=1000)
     parser.add_argument('--num-seeds', type=int, default=10)
     parser.add_argument('--seed', type=int, default=123)
@@ -85,7 +66,7 @@ def make_problem(X, rw, num_nodes, num_seeds, shuffle_A=False, seed=None):
 
 print('main.py: loading', file=sys.stderr)
 args = parse_args()
-SGMClass = _backends[args.backend]
+SGMClass = sgm.factory(*args.backend.split('.'))
 np.random.seed(args.seed)
 
 edges = np.load(args.inpath)
@@ -108,23 +89,18 @@ A, B, P = make_problem(
 
 print('main.py: SGMClass.run()', file=sys.stderr)
 start_time = time() 
-sgm = SGMClass()
-P_out = sgm.run(
-    A=A,
-    P=P,
-    B=B,
-    num_iters=20,
-    tolerance=1
-)
+sgm   = SGMClass(A=A, B=B, P=P)
+P_out = sgm.run(num_iters=20, tolerance=1)
 sgm_time = time() - start_time
 
+P_out = sparse.csr_matrix((np.ones(args.num_nodes), (np.arange(args.num_nodes), P_out)))
 B_perm = P_out.dot(B).dot(P_out.T)
 
 print(json.dumps({
     "backend"    : str(args.backend),
     "num_nodes"  : int(args.num_nodes),
     "num_seeds"  : int(args.num_seeds),
-    "sgm_time"   : float(sgm_time),
+    "total_time" : float(sgm_time),
     "dist_orig"  : float((A.toarray() != B.toarray()).sum()),
     "dist_perm"  : float((A.toarray() != B_perm.toarray()).sum()),
     # "times" : {

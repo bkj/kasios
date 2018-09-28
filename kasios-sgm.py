@@ -19,8 +19,7 @@ from scipy import sparse
 import itertools
 from concurrent.futures import ProcessPoolExecutor
 
-sys.path.append('/home/bjohnson/projects/sgm')
-from backends import ScipySGM, ScipyFusedSGM, AuctionSGM, AuctionFusedSGM
+from sgm import ScipySGM, ScipyFusedSGM, AuctionSGM, AuctionFusedSGM
 
 _backends = {
     "scipy"         : ScipySGM,

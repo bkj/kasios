@@ -31,14 +31,15 @@ cat results/kasios.jl  | sort -n > tmp && mv tmp results/kasios.jl
 # --
 # Run SGM (backends)
 
-NUM_NODES=15000
-NUM_SEEDS=128
+NUM_NODES=1000
+NUM_SEEDS=32
 
-python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend jv_classic
-# python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend jv_sparse
-# python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend jv_fused
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend scipy.classic.jv
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend scipy.sparse.jv
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend scipy.fused.jv
 
 # python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend auction_classic
-# python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend auction_sparse
-python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend auction_fused
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend scipy.sparse.auction
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend scipy.fused.auction
 
+python main.py --num-nodes $NUM_NODES --num-seeds $NUM_SEEDS --backend torch.classic.jv
