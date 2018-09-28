@@ -88,10 +88,11 @@ A, B, P = make_problem(
 )
 
 print('main.py: SGMClass.run()', file=sys.stderr)
+sgm = SGMClass(A=A, B=B, P=P)
+
 start_time = time() 
-sgm   = SGMClass(A=A, B=B, P=P)
-P_out = sgm.run(num_iters=20, tolerance=1)
-sgm_time = time() - start_time
+P_out      = sgm.run(num_iters=20, tolerance=1)
+total_time = time() - start_time
 
 P_out = sparse.csr_matrix((np.ones(args.num_nodes), (np.arange(args.num_nodes), P_out)))
 B_perm = P_out.dot(B).dot(P_out.T)
@@ -100,7 +101,7 @@ print(json.dumps({
     "backend"    : str(args.backend),
     "num_nodes"  : int(args.num_nodes),
     "num_seeds"  : int(args.num_seeds),
-    "total_time" : float(sgm_time),
+    "total_time" : float(total_time),
     "dist_orig"  : float((A.toarray() != B.toarray()).sum()),
     "dist_perm"  : float((A.toarray() != B_perm.toarray()).sum()),
     # "times" : {
